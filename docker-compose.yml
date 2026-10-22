@@ -4,6 +4,7 @@ services:
     container_name: 9router-go
     ports:
       - "20130:20130"
+    user: "1000:1000"
     volumes:
       - 9router-data:/data
     environment:
@@ -19,3 +20,5 @@ services:
 
 volumes:
   9router-data:
+    external: true
+    name: oxygate-oxygate-qx7tlp_9router-data
