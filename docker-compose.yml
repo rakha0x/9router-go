@@ -5,6 +5,8 @@ services:
     ports:
       - "20130:20130"
     user: "1000:1000"
+    networks:
+      - dokploy-network
     volumes:
       - 9router-data:/data
     environment:
@@ -16,7 +18,24 @@ services:
       # - PONYTAIL_ENABLED=false
       # Or use DB_PATH for custom SQLite location:
       # - DB_PATH=/data/custom/data.sqlite
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=dokploy-network"
+      - "traefik.http.routers.routergo-app-3dtx1i-web.rule=Host(`api.oxygate.web.id`)"
+      - "traefik.http.routers.routergo-app-3dtx1i-web.entrypoints=web"
+      - "traefik.http.routers.routergo-app-3dtx1i-web.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.routergo-app-3dtx1i-web.service=routergo-app-3dtx1i-web"
+      - "traefik.http.services.routergo-app-3dtx1i-web.loadbalancer.server.port=20130"
+      - "traefik.http.routers.routergo-app-3dtx1i-websecure.rule=Host(`api.oxygate.web.id`)"
+      - "traefik.http.routers.routergo-app-3dtx1i-websecure.entrypoints=websecure"
+      - "traefik.http.routers.routergo-app-3dtx1i-websecure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.routergo-app-3dtx1i-websecure.service=routergo-app-3dtx1i-websecure"
+      - "traefik.http.services.routergo-app-3dtx1i-websecure.loadbalancer.server.port=20130"
     restart: unless-stopped
+
+networks:
+  dokploy-network:
+    external: true
 
 volumes:
   9router-data:
